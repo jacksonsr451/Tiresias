@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "tiresias"
+version = "0.1.0"
+description = ""
+authors = ["Jackson Severino da Rocha <jackson.rocha@prefi.tech>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+beautifulsoup4 = "^4.13.3"
+pandas = "^2.2.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+app = "tiresias.main:create_app"

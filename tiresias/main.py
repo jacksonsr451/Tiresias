@@ -1,6 +1,8 @@
 # Author Josquin Debaz
 # GPL 3
 
+import sys
+import threading
 import urllib.request
 import re
 import time
@@ -52,7 +54,7 @@ def get_last_on_remote():
 
 
 def get_last_on_local():
-    with open("CHANGELOG.txt", 'rb') as file:
+    with open("CHANGELOG.txt", "rb") as file:
         buf = file.read().decode()
     return time.strptime(re.findall(r"\d{2}/\d{2}/\d{4}", buf)[0], "%d/%m/%Y")
 
@@ -62,15 +64,12 @@ class MainView(tk.Toplevel):
         tk.Toplevel.__init__(self, parent)
         self.parent = parent
         self.title("Tirésias")
-        self.protocol('WM_DELETE_WINDOW', self.parent.destroy)
+        self.protocol("WM_DELETE_WINDOW", self.parent.destroy)
 
-        with open("README.md", 'rb') as f:
+        with open("README.md", "rb") as f:
             welcome_txt = f.read().decode()
         welcome_txt = re.sub(r"[\r\n]+", "\n", welcome_txt)
-        welcome = tk.Message(self,
-                             bg="white",
-                             width=1024,
-                             text=welcome_txt)
+        welcome = tk.Message(self, bg="white", width=1024, text=welcome_txt)
         welcome.pack()
 
         self.update_string = tk.StringVar()
@@ -83,58 +82,50 @@ class MainView(tk.Toplevel):
         self.config(menu=self.menubar)
 
         file_menu = self.add_menu("Files")
-        file_menu.add_command(label="List .txt",
-                              command=self.corrector_list_txt)
-        file_menu.add_command(label="Go to code repository",
-                              command=get_new_version)
-        file_menu.add_command(label="Quit",
-                              command=self.parent.destroy)
+        file_menu.add_command(label="List .txt", command=self.corrector_list_txt)
+        file_menu.add_command(label="Go to code repository", command=get_new_version)
+        file_menu.add_command(label="Quit", command=self.parent.destroy)
 
         corrector_menu = self.add_menu("Corrections")
-        corrector_menu.add_command(label="Character cleaning",
-                                   command=self.corrector_cleaning)
-        corrector_menu.add_command(label="Word replace",
-                                   command=self.corrector_replace)
-        corrector_menu.add_command(label="Case change",
-                                   command=self.corrector_case_change)
+        corrector_menu.add_command(
+            label="Character cleaning", command=self.corrector_cleaning
+        )
+        corrector_menu.add_command(label="Word replace", command=self.corrector_replace)
+        corrector_menu.add_command(
+            label="Case change", command=self.corrector_case_change
+        )
 
         prc_menu = self.add_menu("Projects")
-        prc_menu.add_command(label="Filter",
-                             command=self.corrector_filter)
+        prc_menu.add_command(label="Filter", command=self.corrector_filter)
 
         database_menu = self.add_menu("Databases")
-        database_menu.add_command(label=u"Questions parlementaires",
-                                  command=self.database_qp)
-        database_menu.add_command(label="Europresse",
-                                  command=self.database_europresse)
-        database_menu.add_command(label="Scopus",
-                                  command=self.database_scopus)
-        database_menu.add_command(label="Factiva",
-                                  command=self.database_factiva)
-        database_menu.add_command(label="Lexis Nexis",
-                                  command=self.database_lexis)
-        database_menu.add_command(label="Newton",
-                                  command=self.database_newton)
-        database_menu.add_command(label="books.openedition",
-                                  command=self.database_openbooks)
+        database_menu.add_command(
+            label="Questions parlementaires", command=self.database_qp
+        )
+        database_menu.add_command(label="Europresse", command=self.database_europresse)
+        database_menu.add_command(label="Scopus", command=self.database_scopus)
+        database_menu.add_command(label="Factiva", command=self.database_factiva)
+        database_menu.add_command(label="Lexis Nexis", command=self.database_lexis)
+        database_menu.add_command(label="Newton", command=self.database_newton)
+        database_menu.add_command(
+            label="books.openedition", command=self.database_openbooks
+        )
 
         dataviz_menu = self.add_menu("Dataviz")
-        dataviz_menu.add_command(label="QP Atlas",
-                                 command=self.dataviz_qp_atlas)
-        dataviz_menu.add_command(label="Cited years timeline",
-                                 command=self.dataviz_cited_years)
-        dataviz_menu.add_command(label="Month heatmap",
-                                 command=self.dataviz_heatmap)
+        dataviz_menu.add_command(label="QP Atlas", command=self.dataviz_qp_atlas)
+        dataviz_menu.add_command(
+            label="Cited years timeline", command=self.dataviz_cited_years
+        )
+        dataviz_menu.add_command(label="Month heatmap", command=self.dataviz_heatmap)
 
         conversion_menu = self.add_menu("Conversions")
-        conversion_menu.add_command(label="Convert csv to txt/ctx",
-                                    command=self.convert_convert)
+        conversion_menu.add_command(
+            label="Convert csv to txt/ctx", command=self.convert_convert
+        )
 
     def add_menu(self, lab):
-        menu = tk.Menu(self.menubar,
-                       tearoff=0)
-        self.menubar.add_cascade(label=lab,
-                                 menu=menu)
+        menu = tk.Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label=lab, menu=menu)
         return menu
 
     def corrector_list_txt(self):
@@ -210,8 +201,40 @@ class MainView(tk.Toplevel):
         self.update_string.set(check_for_update())
 
 
-if __name__ == '__main__':
-    root = tk.Tk()
-    root.withdraw()
-    app = MainView(root)
-    root.mainloop()
+root = None
+
+
+def long_task():
+    for i in range(5):
+        print(f"Long task running: {i + 1}")
+        time.sleep(1)
+
+    root.after(0, update_label)
+
+
+def update_label():
+    label.config(text="Long task completed!")
+
+
+def create_app():
+    global label
+
+    try:
+        root = tk.Tk()
+        root.withdraw()
+
+        app = MainView(root)
+
+        start_button = tk.Button(app, text="Start Long Task", command=start_long_task)
+        start_button.pack()
+
+        root.mainloop()
+    except Exception as e:
+        print("Application terminated by user.")
+        root.destroy()
+        sys.exit(0)
+
+
+def start_long_task():
+    thread = Thread(target=long_task, daemon=True)
+    thread.start()
