@@ -240,3 +240,7 @@ def create_app():
 def start_long_task():
     thread = Thread(target=long_task, daemon=True)
     thread.start()
+
+
+if __name__ == "__main__":
+    create_app()
