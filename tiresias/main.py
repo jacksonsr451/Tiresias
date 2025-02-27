@@ -126,15 +126,15 @@ class MainView(tk.Toplevel):
         )
         # TODO: Include commands to menus
         conversion_menu.add_command(
-            label="Encode/decode file to TYPE from TYPE",
+            label="Encode/decode file from TYPE to TYPE",
             command=lambda: "convert_encode_decode",
         )
         conversion_menu.add_command(
-            label="Convert csv-tiresias from csv-gargantext",
+            label="Convert csv-tiresias to csv-gargantext",
             command=lambda: "convert_csv_tiresias_from_csv_gargantext",
         )
         conversion_menu.add_command(
-            label="Convert csv-prosopub from csv-gargantext",
+            label="Convert csv-prosopub to csv-gargantext",
             command=lambda: "convert_csv_prosopub_from_csv_gargantext",
         )
 
