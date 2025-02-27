@@ -2,7 +2,6 @@
 # GPL 3
 
 import sys
-import threading
 import urllib.request
 import re
 import time
@@ -10,22 +9,25 @@ import webbrowser
 import tkinter as tk
 from threading import Thread
 
-import views.listtxt
-import views.cleaning
-import views.filter
-import views.qp
-import views.europresse
-import views.wordreplace
-import views.qpmap
-import views.scopus
-import views.factiva
-import views.lexis
-import views.newton
-import views.cited_years
-import views.heatmap
-import views.capitals
-import views.openbooks
-import views.convert
+
+from views import (
+    listtxt,
+    cleaning,
+    filter,
+    qp,
+    europresse,
+    wordreplace,
+    qpmap,
+    scopus,
+    factiva,
+    lexis,
+    newton,
+    cited_years,
+    heatmap,
+    capitals,
+    openbooks,
+    convert,
+)
 
 
 def get_new_version():
@@ -130,67 +132,67 @@ class MainView(tk.Toplevel):
 
     def corrector_list_txt(self):
         self.reset_view()
-        views.listtxt.ViewListTxt(self)
+        listtxt.ViewListTxt(self)
 
     def corrector_cleaning(self):
         self.reset_view()
-        views.cleaning.ViewCleaning(self)
+        cleaning.ViewCleaning(self)
 
     def corrector_replace(self):
         self.reset_view()
-        views.wordreplace.ViewReplacer(self)
+        wordreplace.ViewReplacer(self)
 
     def corrector_case_change(self):
         self.reset_view()
-        views.capitals.ViewCap(self)
+        capitals.ViewCap(self)
 
     def corrector_filter(self):
         self.reset_view()
-        views.filter.ViewFilter(self)
+        filter.ViewFilter(self)
 
     def database_qp(self):
         self.reset_view()
-        views.qp.ViewQP(self)
+        qp.ViewQP(self)
 
     def database_europresse(self):
         self.reset_view()
-        views.europresse.ViewEuropresse(self)
+        europresse.ViewEuropresse(self)
 
     def database_scopus(self):
         self.reset_view()
-        views.scopus.ViewScopus(self)
+        scopus.ViewScopus(self)
 
     def database_factiva(self):
         self.reset_view()
-        views.factiva.ViewFactiva(self)
+        factiva.ViewFactiva(self)
 
     def database_lexis(self):
         self.reset_view()
-        views.lexis.ViewLexis(self)
+        lexis.ViewLexis(self)
 
     def database_newton(self):
         self.reset_view()
-        views.newton.ViewNewton(self)
+        newton.ViewNewton(self)
 
     def database_openbooks(self):
         self.reset_view()
-        views.openbooks.ViewOpenbooks(self)
+        openbooks.ViewOpenbooks(self)
 
     def dataviz_qp_atlas(self):
         self.reset_view()
-        views.qpmap.ViewPaster(self)
+        qpmap.ViewPaster(self)
 
     def dataviz_cited_years(self):
         self.reset_view()
-        views.cited_years.ViewYears(self)
+        cited_years.ViewYears(self)
 
     def dataviz_heatmap(self):
         self.reset_view()
-        views.heatmap.ViewPaster(self)
+        heatmap.ViewPaster(self)
 
     def convert_convert(self):
         self.reset_view()
-        views.convert.ViewConvert(self)
+        convert.ViewConvert(self)
 
     def reset_view(self):
         for process in self.slaves():
