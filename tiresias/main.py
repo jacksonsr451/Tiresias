@@ -124,6 +124,19 @@ class MainView(tk.Toplevel):
         conversion_menu.add_command(
             label="Convert csv to txt/ctx", command=self.convert_convert
         )
+        # TODO: Include commands to menus
+        conversion_menu.add_command(
+            label="Encode/decode file to TYPE from TYPE",
+            command=lambda: "convert_encode_decode",
+        )
+        conversion_menu.add_command(
+            label="Convert csv-tiresias from csv-gargantext",
+            command=lambda: "convert_csv_tiresias_from_csv_gargantext",
+        )
+        conversion_menu.add_command(
+            label="Convert csv-prosopub from csv-gargantext",
+            command=lambda: "convert_csv_prosopub_from_csv_gargantext",
+        )
 
     def add_menu(self, lab):
         menu = tk.Menu(self.menubar, tearoff=0)
