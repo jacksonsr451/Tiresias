@@ -163,12 +163,9 @@ class ViewConvertEncodeDecode:
 
         if converted_files:
             zip_path = self.create_zip(converted_files, selected_dir)
-            # Aqui garantimos que o arquivo ZIP vai ser salvo diretamente no diretório selecionado
-            zip_final_path = os.path.join(selected_dir, "converted_files.zip")
-            shutil.move(zip_path, zip_final_path)
-            messagebox.showinfo(
-                "Success", f"Files converted and saved in:\n{zip_final_path}"
-            )
+            for file in converted_files:
+                os.remove(file)
 
+            messagebox.showinfo("Success", f"Files converted and saved in:\n{zip_path}")
         else:
             messagebox.showwarning("Warning", "No files were converted.")
