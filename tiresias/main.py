@@ -128,11 +128,11 @@ class MainView(tk.Toplevel):
         conversion_menu.add_command(
             label="Convert csv to txt/ctx", command=self.convert_convert
         )
-        # TODO: Include commands to menus
         conversion_menu.add_command(
             label="Encode/decode file from TYPE to TYPE",
             command=self.convert__encode_decode,
         )
+        # TODO: Include commands to menus
         conversion_menu.add_command(
             label="Convert csv-tiresias to csv-gargantext",
             command=lambda: "convert_csv_tiresias_from_csv_gargantext",
