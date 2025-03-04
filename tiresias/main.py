@@ -28,6 +28,7 @@ from views import (
     openbooks,
     convert,
 )
+from views.conversions import convert_encode_decode
 
 
 def get_new_version():
@@ -67,6 +68,9 @@ class MainView(tk.Toplevel):
         self.parent = parent
         self.title("Tirésias")
         self.protocol("WM_DELETE_WINDOW", self.parent.destroy)
+
+        self.attributes("-fullscreen", True)
+        self.bind("<Escape>", self.exit_fullscreen)
 
         with open("README.md", "rb") as f:
             welcome_txt = f.read().decode()
@@ -127,7 +131,7 @@ class MainView(tk.Toplevel):
         # TODO: Include commands to menus
         conversion_menu.add_command(
             label="Encode/decode file from TYPE to TYPE",
-            command=lambda: "convert_encode_decode",
+            command=self.convert__encode_decode,
         )
         conversion_menu.add_command(
             label="Convert csv-tiresias to csv-gargantext",
@@ -137,6 +141,18 @@ class MainView(tk.Toplevel):
             label="Convert csv-prosopub to csv-gargantext",
             command=lambda: "convert_csv_prosopub_from_csv_gargantext",
         )
+
+    def exit_fullscreen(self, event=None):
+        self.attributes("-fullscreen", False)
+        self.center_window(1100, 500)
+
+    def center_window(self, width, height):
+        self.update_idletasks()
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
     def add_menu(self, lab):
         menu = tk.Menu(self.menubar, tearoff=0)
@@ -206,6 +222,12 @@ class MainView(tk.Toplevel):
     def convert_convert(self):
         self.reset_view()
         convert.ViewConvert(self)
+
+    def convert__encode_decode(self):
+        self.reset_view()
+        self.minsize(800, 400)
+
+        convert_encode_decode.ViewConvertEncodeDecode(self)
 
     def reset_view(self):
         for process in self.slaves():
