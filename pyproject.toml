@@ -19,5 +19,5 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-app = "tiresias.main:create_app"
+dev = "tiresias.main:create_app"
 build = "build:build"
