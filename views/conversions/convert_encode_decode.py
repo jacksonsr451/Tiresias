@@ -80,7 +80,8 @@ class ViewConvertEncodeDecode:
             title="Select one or more files",
             filetypes=[
                 ("All Files", "*.*"),
-                ("CSV Files", "*.csv"),
+                ("TXT Files", "*.txt"),
+                ("CTX Files", "*.ctx"),
                 ("ZIP Files", "*.zip"),
             ],
         )
