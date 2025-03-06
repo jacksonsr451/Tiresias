@@ -49,7 +49,7 @@ For Windows users, an almost up to date .exe is available on https://github.com/
 
 ## Download APP
 
-[Baixar Tiresias AppImage Debian Version](https://raw.githubusercontent.com/jacksonsr451/Tiresias/main/tiresias-x86_64.AppImage)
+[Baixar Tiresias AppImage Debian Version](https://raw.githubusercontent.com/jacksonsr451/Tiresias/master/tiresias-x86_64.AppImage)
 
 Code available on https://github.com/josquindebaz/Tiresias
 
