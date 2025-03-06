@@ -35,8 +35,14 @@ For Windows users, an almost up to date .exe is available on https://github.com/
   ```
 
 * `Run project`
+
   ```
   poetry run dev
+  ```
+
+* `Build app`
+  ```
+  poetry run build
   ```
 
 ## Download APP
