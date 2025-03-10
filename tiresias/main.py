@@ -133,13 +133,8 @@ class MainView(tk.Toplevel):
             command=self.convert__encode_decode,
         )
         conversion_menu.add_command(
-            label="Convert csv-tiresias to csv-gargantext",
+            label="Convert csv-tiresias to tsv-gargantext",
             command=self.convert__tiresias_to_gargantext,
-        )
-        # TODO: Include commands to menus
-        conversion_menu.add_command(
-            label="Convert csv-prosopub to csv-gargantext",
-            command=lambda: "convert_csv_prosopub_from_csv_gargantext",
         )
 
     def exit_fullscreen(self, event=None):
