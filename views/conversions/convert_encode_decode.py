@@ -83,6 +83,7 @@ class ViewConvertEncodeDecode:
             filetypes=[
                 ("All Files", "*.*"),
                 ("TXT Files", "*.txt"),
+                ("TXT Files", "*.srt"),
                 ("CTX Files", "*.ctx"),
                 ("ZIP Files", "*.zip"),
             ],
@@ -152,7 +153,7 @@ class ViewConvertEncodeDecode:
 
             try:
                 with open(file_path, "r", encoding=from_encoding) as f:
-                    content = f.read()
+                    content = f.read().lstrip("\ufeff")
 
                 file_name = os.path.basename(file_path)
                 output_path = os.path.join(temp_dir, file_name)
