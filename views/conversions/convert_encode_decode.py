@@ -1,4 +1,5 @@
 import os
+import tempfile
 import zipfile
 import shutil
 from tkinter import filedialog, messagebox
@@ -133,6 +134,8 @@ class ViewConvertEncodeDecode:
         converted_files = []
         extracted_dirs = []
 
+        temp_dir = tempfile.mkdtemp()
+
         for file_path in selected_files:
             if file_path.endswith(".zip"):
                 extracted_files, extract_dir = self.extract_zip(file_path)
@@ -149,7 +152,7 @@ class ViewConvertEncodeDecode:
                     content = f.read()
 
                 file_name = os.path.basename(file_path)
-                output_path = os.path.join(selected_dir, file_name)
+                output_path = os.path.join(temp_dir, file_name)
 
                 with open(output_path, "w", encoding=to_encoding) as f:
                     f.write(content)
@@ -164,8 +167,8 @@ class ViewConvertEncodeDecode:
 
         if converted_files:
             zip_path = self.create_zip(converted_files, selected_dir)
-            for file in converted_files:
-                os.remove(file)
+
+            shutil.rmtree(temp_dir)
 
             messagebox.showinfo("Success", f"Files converted and saved in:\n{zip_path}")
         else:
