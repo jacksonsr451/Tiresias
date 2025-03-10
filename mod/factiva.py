@@ -1,4 +1,4 @@
-""" From FACTIVA hml to Prospéro Files  TXT and CTX
+"""From FACTIVA hml to Prospéro Files  TXT and CTX
 Josquin Debaz
 GNU General Public License
 Version 3, 29 June 2007
@@ -254,10 +254,15 @@ class ParseHtm:
                 medias[media[0]] = media[1:]
 
         for key, article in self.articles.items():
-            if article["media"] in medias.keys():
-                self.articles[key]["support"] = medias[article["media"]][0]
-                self.articles[key]["source_type"] = medias[article["media"]][1]
-                self.articles[key]["root"] = medias[article["media"]][2]
+            if article["media"] in medias:
+                if len(medias[article["media"]]) > 0:
+                    self.articles[key]["support"] = medias[article["media"]][0]
+                    self.articles[key]["source_type"] = medias[article["media"]][1]
+                    self.articles[key]["root"] = medias[article["media"]][2]
+                else:
+                    self.articles[key]["support"] = article["media"]
+                    self.articles[key]["source_type"] = "unknown source"
+                    self.articles[key]["root"] = "FACTIVA"
             else:
                 if article["media"] not in self.unknowns:
                     self.unknowns.append(article["media"])
