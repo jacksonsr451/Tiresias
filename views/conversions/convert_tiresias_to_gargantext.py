@@ -100,11 +100,11 @@ class ViewConvertTiresiasToGargantext:
 
                     for row in reader:
                         if len(row) > 1:
-                            title = row[0].strip()  # CLM - title
-                            source = row[1].strip()  # SE - source
+                            title = row[2].strip()  # HD - title
+                            source = row[7].strip()  # SN - source
                             publication_info = row[6].strip()  # CR - publication info
-                            abstract = row[2].strip()  # TD - abstract
-                            authors = row[19].strip()  # BY - authors
+                            abstract = row[14].strip()  # TD - abstract
+                            authors = row[3].strip()  # BY - authors
 
                             publication_parts = publication_info.split("/")
                             if len(publication_parts) == 3:
@@ -117,31 +117,34 @@ class ViewConvertTiresiasToGargantext:
                                 ) = ""
 
                             converted_row = {
+                                "publication_day": publication_day,
+                                "publication_month": publication_month,
+                                "publication_year": publication_year,
+                                "authors": authors,
                                 "title": title,
                                 "source": source,
-                                "publication_year": publication_year,
-                                "publication_month": publication_month,
-                                "publication_day": publication_day,
                                 "abstract": abstract,
-                                "authors": authors,
                             }
 
                             converted_data.append(converted_row)
 
                 output_file = os.path.join(
-                    output_dir, f"gargantext_{os.path.basename(file_path)}"
+                    output_dir,
+                    f"gargantext_{os.path.basename(file_path).replace('.csv', '.tsv')}",
                 )
                 with open(output_file, "w", encoding="utf-8", newline="") as outfile:
                     fieldnames = [
+                        "publication_day",
+                        "publication_month",
+                        "publication_year",
+                        "authors",
                         "title",
                         "source",
-                        "publication_year",
-                        "publication_month",
-                        "publication_day",
                         "abstract",
-                        "authors",
                     ]
-                    writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+                    writer = csv.DictWriter(
+                        outfile, fieldnames=fieldnames, delimiter="\t"
+                    )
 
                     writer.writeheader()
                     for row in converted_data:
