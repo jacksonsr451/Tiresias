@@ -28,7 +28,7 @@ from views import (
     openbooks,
     convert,
 )
-from views.conversions import convert_encode_decode
+from views.conversions import convert_encode_decode, convert_tiresias_to_gargantext
 
 
 def get_new_version():
@@ -132,11 +132,11 @@ class MainView(tk.Toplevel):
             label="Encode/decode file from TYPE to TYPE",
             command=self.convert__encode_decode,
         )
-        # TODO: Include commands to menus
         conversion_menu.add_command(
             label="Convert csv-tiresias to csv-gargantext",
-            command=lambda: "convert_csv_tiresias_from_csv_gargantext",
+            command=self.convert__tiresias_to_gargantext,
         )
+        # TODO: Include commands to menus
         conversion_menu.add_command(
             label="Convert csv-prosopub to csv-gargantext",
             command=lambda: "convert_csv_prosopub_from_csv_gargantext",
@@ -228,6 +228,10 @@ class MainView(tk.Toplevel):
         self.minsize(800, 400)
 
         convert_encode_decode.ViewConvertEncodeDecode(self)
+
+    def convert__tiresias_to_gargantext(self):
+        self.reset_view()
+        convert_tiresias_to_gargantext.ViewConvertTiresiasToGargantext(self)
 
     def reset_view(self):
         for process in self.slaves():
