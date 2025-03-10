@@ -130,7 +130,7 @@ class ViewFactiva:
             with open(
                 os.path.join(save_dir, csv_filename),
                 "w",
-                encoding="Windows-1252",
+                encoding="utf8",
                 newline="",
             ) as csv_file:
                 writer = csv.writer(

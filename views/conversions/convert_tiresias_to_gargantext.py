@@ -92,7 +92,7 @@ class ViewConvertTiresiasToGargantext:
 
         for file_path in file_paths:
             try:
-                with open(file_path, "r", encoding="ISO-8859-1") as infile:
+                with open(file_path, "r", encoding="utf8") as infile:
                     reader = csv.reader(infile, delimiter=";")
                     converted_data = []
 
