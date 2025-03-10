@@ -120,9 +120,9 @@ class ViewConvertTiresiasToGargantext:
                                 "publication_day": publication_day,
                                 "publication_month": publication_month,
                                 "publication_year": publication_year,
+                                "source": source,
                                 "authors": authors,
                                 "title": title,
-                                "source": source,
                                 "abstract": abstract,
                             }
 
@@ -137,9 +137,9 @@ class ViewConvertTiresiasToGargantext:
                         "publication_day",
                         "publication_month",
                         "publication_year",
+                        "source",
                         "authors",
                         "title",
-                        "source",
                         "abstract",
                     ]
                     writer = csv.DictWriter(
