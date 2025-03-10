@@ -79,6 +79,7 @@ class ViewConvertEncodeDecode:
     def sel_files(self):
         file_paths = filedialog.askopenfilenames(
             title="Select one or more files",
+            initialdir=os.path.expanduser("~"),
             filetypes=[
                 ("All Files", "*.*"),
                 ("TXT Files", "*.txt"),
@@ -90,7 +91,9 @@ class ViewConvertEncodeDecode:
             self.choose_files.set("; ".join(file_paths))
 
     def sel_dir(self):
-        dir_path = filedialog.askdirectory(title="Select a directory")
+        dir_path = filedialog.askdirectory(
+            title="Select a directory", initialdir=os.path.expanduser("~")
+        )
         if dir_path:
             self.choose_dir.set(dir_path)
 
