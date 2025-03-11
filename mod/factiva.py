@@ -307,7 +307,7 @@ class ParseHtm:
             row = []
             for key in keys:
                 key = "date" if key == "PD" else key
-                row.append(str(article[key]).replace(";", "").replace(",", ""))
+                row.append(str(article[key]).replace(";", ""))
             self.rows.append(row)
 
         for article in self.articles.values():
