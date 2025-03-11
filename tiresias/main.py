@@ -133,7 +133,7 @@ class MainView(tk.Toplevel):
             command=self.convert__encode_decode,
         )
         conversion_menu.add_command(
-            label="Convert csv-tiresias to tsv-gargantext",
+            label="Convert csv-factiva to tsv-gargantext",
             command=self.convert__tiresias_to_gargantext,
         )
 
