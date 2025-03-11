@@ -97,12 +97,17 @@ class ViewConvertTiresiasToGargantext:
         self.frame4 = tk.Frame(self.parent)
         self.frame4.pack(anchor=tk.W, padx=5, pady=2)
 
-        self.char_limit_label = tk.Label(self.frame4, text="Number of parts:")
+        self.char_limit_label = tk.Label(self.frame4, text="Number of characters:")
         self.char_limit_label.pack(side=tk.LEFT, padx=5)
 
         self.char_limit = tk.Entry(self.frame4, width=10)
         self.char_limit.insert(0, "1000")
         self.char_limit.pack(side=tk.LEFT, padx=5)
+
+        self.char_limit.bind("<FocusOut>", self.validate_input)
+
+        self.char_limit_unit = tk.Label(self.frame4, text="(between 1000 and 4000)")
+        self.char_limit_unit.pack(side=tk.LEFT, padx=5)
 
         self.frame5 = tk.Frame(self.parent)
         self.frame5.pack(anchor=tk.W, padx=5, pady=2)
@@ -114,6 +119,21 @@ class ViewConvertTiresiasToGargantext:
 
         self.progress_label = tk.Label(self.frame5, text="0%")
         self.progress_label.pack(side=tk.RIGHT, padx=5)
+
+    def validate_input(self, P):
+        value = self.char_limit.get()
+
+        try:
+            value = int(value)
+            if value < 1000 or value > 4000:
+                raise ValueError("Value out of range")
+        except ValueError:
+            messagebox.showerror(
+                "Invalid Input",
+                "Please enter a number between 1000 and 4000.",
+            )
+            self.char_limit.delete(0, tk.END)
+            self.char_limit.insert(0, "1000")
 
     def sel_files(self):
         file_paths = filedialog.askopenfilenames(
