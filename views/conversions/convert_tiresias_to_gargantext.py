@@ -62,7 +62,7 @@ class ViewConvertTiresiasToGargantext:
     def __init__(self, parent):
         self.parent = parent
         self.window_title = tk.Label(
-            self.parent, text="Tiresias to Gargantext", font=("Helvetica", 12, "bold")
+            self.parent, text="Factiva to Gargantext", font=("Helvetica", 12, "bold")
         )
         self.window_title.pack(fill=tk.X)
 
