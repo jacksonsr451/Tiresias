@@ -7,7 +7,10 @@ import re
 import time
 import webbrowser
 import tkinter as tk
+from tkinterweb import HtmlFrame
 from threading import Thread
+
+import markdown
 
 
 from views import (
@@ -72,11 +75,14 @@ class MainView(tk.Toplevel):
         self.attributes("-fullscreen", True)
         self.bind("<Escape>", self.exit_fullscreen)
 
-        with open("README.md", "rb") as f:
-            welcome_txt = f.read().decode()
-        welcome_txt = re.sub(r"[\r\n]+", "\n", welcome_txt)
-        welcome = tk.Message(self, bg="white", width=1024, text=welcome_txt)
-        welcome.pack()
+        with open("tiresias/README.md", "r", encoding="utf-8") as f:
+            md_text = f.read()
+
+        html_content = markdown.markdown(md_text)
+
+        frame = HtmlFrame(self, messages_enabled=False)
+        frame.load_html(html_content)
+        frame.pack(fill="both", expand=True)
 
         self.update_string = tk.StringVar()
         version = tk.Label(self, textvariable=self.update_string)
