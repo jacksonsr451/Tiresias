@@ -1,53 +1,61 @@
+import re
 import csv
 import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
 
-def segment_abstract(abstract, source, author, year, month, day, parts_count):
-    lines = abstract.split("\n")
-    nb_lines = len(lines)
+def segment_abstract(
+    title, abstract, source, author, year, month, day, char_limit=2000
+):
+    min_chars = 1000
+    max_chars = 4000
+    char_limit = max(min_chars, min(char_limit, max_chars))
 
-    if nb_lines == 0 or parts_count < 1:
+    abstract = abstract.replace("�", "").replace("", "").strip()
+    if not abstract:
         return []
 
-    if nb_lines > parts_count * 10:
-        parts_count = (nb_lines // 10) + (1 if nb_lines % 10 != 0 else 0)
-
-    part_size = nb_lines // parts_count
-    remainder = nb_lines % parts_count
-    n = 0
+    segments = []
+    start = 0
     count = 1
-    segmented_data = []
 
-    for i in range(parts_count):
-        part_lines = part_size + (1 if i < remainder else 0)
-        doc = (
-            "\n".join(lines[n : n + part_lines])
-            .replace("�", "")
-            .replace("", "")
-            .strip()
-        )
+    while start < len(abstract):
+        end = start + char_limit
 
-        if not doc:
-            continue
+        if end < len(abstract):
+            match = re.search(r",\s", abstract[end:])
+            if match:
+                end += match.start() + 1
+            else:
+                end = min(start + max_chars, len(abstract))
 
-        title = f"{source} : Part {count}"
-        segmented_data.append(
-            {
-                "publication_day": day,
-                "publication_month": month,
-                "publication_year": year,
-                "source": source,
-                "authors": author,
-                "title": title,
-                "abstract": doc,
-            }
-        )
-        n += part_lines
-        count += 1
+        if end < len(abstract) and abstract[end - 1] == ",":
+            end -= 1
 
-    return segmented_data
+        segment_text = abstract[start:end].strip()
+        if segment_text:
+            segment_title = (
+                title
+                if count == 1 and end >= len(abstract)
+                else f"{title} : Part {count}"
+            )
+            segments.append(
+                {
+                    "PUBLICATION DAY": day,
+                    "PUBLICATION MONTH": month,
+                    "PUBLICATION YEAR": year,
+                    "SOURCE": source,
+                    "AUTHORS": author,
+                    "TITLE": segment_title,
+                    "ABSTRACT": segment_text,
+                }
+            )
+            count += 1
+
+        start = end
+
+    return segments
 
 
 class ViewConvertTiresiasToGargantext:
@@ -89,12 +97,12 @@ class ViewConvertTiresiasToGargantext:
         self.frame4 = tk.Frame(self.parent)
         self.frame4.pack(anchor=tk.W, padx=5, pady=2)
 
-        self.parts_entry_label = tk.Label(self.frame4, text="Number of parts:")
-        self.parts_entry_label.pack(side=tk.LEFT, padx=5)
+        self.char_limit_label = tk.Label(self.frame4, text="Number of parts:")
+        self.char_limit_label.pack(side=tk.LEFT, padx=5)
 
-        self.parts_entry = tk.Entry(self.frame4, width=10)
-        self.parts_entry.insert(0, "6")
-        self.parts_entry.pack(side=tk.LEFT, padx=5)
+        self.char_limit = tk.Entry(self.frame4, width=10)
+        self.char_limit.insert(0, "1000")
+        self.char_limit.pack(side=tk.LEFT, padx=5)
 
         self.frame5 = tk.Frame(self.parent)
         self.frame5.pack(anchor=tk.W, padx=5, pady=2)
@@ -128,20 +136,20 @@ class ViewConvertTiresiasToGargantext:
     def convert(self):
         file_paths = self.csv_entry.get()
         output_dir = self.dir_entry.get()
-        parts_count = self.parts_entry.get()
+        char_limit = self.char_limit.get()
 
         if (
             not file_paths
             or not output_dir
-            or not parts_count.isdigit()
-            or int(parts_count) < 1
+            or not char_limit.isdigit()
+            or int(char_limit) < 1
         ):
             messagebox.showerror(
                 "Error", "Please select a file, directory, and valid number of parts!"
             )
             return
 
-        parts_count = int(parts_count)
+        char_limit = int(char_limit)
         file_paths = file_paths.split("; ")
 
         for i, file_path in enumerate(file_paths):
@@ -170,13 +178,14 @@ class ViewConvertTiresiasToGargantext:
                                 ) = ""
 
                             segmented = segment_abstract(
+                                title,
                                 abstract,
                                 source,
                                 authors,
                                 publication_year,
                                 publication_month,
                                 publication_day,
-                                parts_count,
+                                char_limit,
                             )
                             converted_data.extend(segmented)
 
@@ -186,22 +195,23 @@ class ViewConvertTiresiasToGargantext:
                 )
                 with open(output_file, "w", encoding="utf-8", newline="") as outfile:
                     fieldnames = [
-                        "publication_day",
-                        "publication_month",
-                        "publication_year",
+                        "publication day",
+                        "publication month",
+                        "publication year",
                         "source",
                         "authors",
                         "title",
                         "abstract",
                     ]
                     writer = csv.DictWriter(
-                        outfile, fieldnames=fieldnames, delimiter="\t"
+                        outfile,
+                        fieldnames=[f.upper() for f in fieldnames],
+                        delimiter="\t",
                     )
                     writer.writeheader()
                     for row in converted_data:
                         writer.writerow(row)
 
-                # Update progress bar
                 progress = ((i + 1) / len(file_paths)) * 100
                 self.progressbar["value"] = progress
                 self.progress_label["text"] = f"{int(progress)}%"
