@@ -29,9 +29,12 @@ from views import (
     heatmap,
     capitals,
     openbooks,
-    convert,
 )
-from views.conversions import convert_encode_decode, convert_tiresias_to_gargantext
+from views.conversions import (
+    convert_encode_decode,
+    convert_tiresias_to_gargantext,
+    convert_to_factiva,
+)
 
 
 def get_new_version():
@@ -72,7 +75,7 @@ class MainView(tk.Toplevel):
         self.title("Tirésias")
         self.protocol("WM_DELETE_WINDOW", self.parent.destroy)
 
-        self.attributes("-fullscreen", True)
+        self.attributes("-fullscreen", False)
         self.bind("<Escape>", self.exit_fullscreen)
 
         with open("tiresias/README.md", "r", encoding="utf-8") as f:
@@ -222,7 +225,7 @@ class MainView(tk.Toplevel):
 
     def convert_convert(self):
         self.reset_view()
-        convert.ViewConvert(self)
+        convert_to_factiva.ViewConvert(self)
 
     def convert__encode_decode(self):
         self.reset_view()
