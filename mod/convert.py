@@ -1,4 +1,4 @@
-""" From FACTIVA hml to Prospéro Files  TXT and CTX
+"""From FACTIVA hml to Prospéro Files  TXT and CTX
 Josquin Debaz
 GNU General Public License
 Version 3, 29 June 2007
@@ -29,7 +29,7 @@ def format_date(date):
     """return the number of a French or English mouth"""
     months = {
         "janvier": "01",
-        'février': "02",
+        "février": "02",
         "mars": "03",
         "avril": "04",
         "mai": "05",
@@ -41,7 +41,7 @@ def format_date(date):
         "novembre": "11",
         "décembre": "12",
         "January": "01",
-        'February': "02",
+        "February": "02",
         "March": "03",
         "April": "04",
         "May": "05",
@@ -51,7 +51,7 @@ def format_date(date):
         "September": "09",
         "October": "10",
         "November": "11",
-        "December": "12"
+        "December": "12",
     }
     try:
         date = re.split(" ", date)
@@ -85,28 +85,51 @@ def parse(article):
     result = {}
     # get title
     try:
-        tag = re.search(r'<(b|span) class=["\'][a-z]{2}Headline',
-                        article).group(1)
-        title = get(article,
-                    '<%s class=["\'][a-z]{2}Headline["\']>' % tag,
-                    '</%s>' % tag)
-        result['title'] = re.sub(r"^(\r\n|\n)\s*", "", title)
-        result['title'] = re.sub(r"\s*(\r\n|\n)\s*$", "", result['title'])
-        result['title'] = re.sub(r"\s+", " ", result['title'])
+        tag = re.search(r'<(b|span) class=["\'][a-z]{2}Headline', article).group(1)
+        title = get(
+            article, "<%s class=[\"'][a-z]{2}Headline[\"']>" % tag, "</%s>" % tag
+        )
+        result["title"] = re.sub(r"^(\r\n|\n)\s*", "", title)
+        result["title"] = re.sub(r"\s*(\r\n|\n)\s*$", "", result["title"])
+        result["title"] = re.sub(r"\s+", " ", result["title"])
         result["title"] = str(result["title"]).strip()
     except:
-        result['title'] = "Title problem"
+        result["title"] = "Title problem"
     # remove <b> and </b>
-    result['title'] = re.sub(r"</?b>", "", result['title'])
+    result["title"] = re.sub(r"</?b>", "", result["title"])
     # get date and support
-    divs = re.split('<div>', article)
+    divs = re.split("<div>", article)
     form1 = re.compile(r"\d{1,2}\s+[a-zéèûñíáóúüãçA-Z]*\s+\d{4}</div>")
     form2 = re.compile(r"<td>(\d{1,2}\s+[a-zéèûñíáóúüãçA-Z]*\s+\d{4})</td>")
     c = 0
     for div in divs:
 
-        chaves = ["CLM", "SE", "HD", "BY", "CR", "WC", "PD", "SN", "SC", "ED", "PG", "LA", "CY", "LP", "TD", "ART",
-                  "CO", "IN", "NS", "RE", "IPC", "IPD", "PUB", "AN"]
+        chaves = [
+            "CLM",
+            "SE",
+            "HD",
+            "BY",
+            "CR",
+            "WC",
+            "PD",
+            "SN",
+            "SC",
+            "ED",
+            "PG",
+            "LA",
+            "CY",
+            "LP",
+            "TD",
+            "ART",
+            "CO",
+            "IN",
+            "NS",
+            "RE",
+            "IPC",
+            "IPD",
+            "PUB",
+            "AN",
+        ]
         for chave in chaves:
             div_name = f"<b>{chave}</b>&nbsp;</td><td>"
             if div_name in div:
@@ -122,38 +145,40 @@ def parse(article):
                 result[chave] = ""
 
         if form1.search(div):
-            result['date'] = div[:-6]
+            result["date"] = div[:-6]
             if re.search(r"\d{2}:\d{2}</div>", divs[divs.index(div) + 1]):
-                result['time'] = u"REF_HEURE:%s" % div[:-6]
-                result['media'] = divs[divs.index(div) + 2][:-6]
+                result["time"] = "REF_HEURE:%s" % div[:-6]
+                result["media"] = divs[divs.index(div) + 2][:-6]
             else:
-                result['media'] = divs[divs.index(div) + 1][:-6]
+                result["media"] = divs[divs.index(div) + 1][:-6]
         elif form2.search(div):
-            result['date'] = form2.search(div).group(1)
-            result['media'] = get(article,
-                                  '<b>SN</b>&nbsp;</td><td>',
-                                  '</td>')
+            result["date"] = form2.search(div).group(1)
+            result["media"] = get(article, "<b>SN</b>&nbsp;</td><td>", "</td>")
         else:
-            result['date'] = result["PD"]
-            result['media'] = result["SN"]
+            result["date"] = result["PD"]
+            result["media"] = result["SN"]
     # format date
 
-    result['date'] = format_date(result['date'])
+    result["date"] = format_date(result["date"])
     # get narrator
     try:
-        result['narrator'] = get(article,
-                                 '<div class="author">',
-                                 r'\s*</div>')
+        result["narrator"] = get(article, '<div class="author">', r"\s*</div>")
     except:
         pass
 
-    paragraphs = re.split('<p class="articleParagraph [a-z]{2}\
-articleParagraph" >', article)[1:]
+    paragraphs = re.split(
+        '<p class="articleParagraph [a-z]{2}\
+articleParagraph" >',
+        article,
+    )[1:]
     if not paragraphs:
-        paragraphs = re.split('<p class="articleParagraph [a-z]{2}\
-articleParagraph">', article)[1:]
+        paragraphs = re.split(
+            '<p class="articleParagraph [a-z]{2}\
+articleParagraph">',
+            article,
+        )[1:]
     # get text content
-    result['text'] = result['title'] + "\r\n.\r\n" + "LP: "
+    result["text"] = result["title"] + "\r\n.\r\n" + "LP: "
 
     for idx, paragraph in enumerate(paragraphs):
         p = paragraph
@@ -168,8 +193,8 @@ articleParagraph">', article)[1:]
             if idx < len(paragraphs) - 1:
                 result["LP"] = paragraph
                 paragraph = paragraph + "\r\n" + "TD: "
-        result['text'] += paragraph
-    texto = str(str(result['text']).split('LP:')[1]).split('TD:')
+        result["text"] += paragraph
+    texto = str(str(result["text"]).split("LP:")[1]).split("TD:")
     result["LP"] = texto[0]
     result["TD"] = texto[1]
     result["text"] = result["text"].replace("LP: ", "").replace("TD: ", "")
@@ -181,76 +206,79 @@ class ParseCsv:
 
     def __init__(self, fname):
         self.content = pd.read_csv(fname, sep=";", encoding="utf-8")
+        self.articles = {}
+        self.unknowns = []
 
-    # def get_supports(self, fname):
-    #     """parse supports.publi and find correspondences"""
-    #     medias = {}
-    #     with open(fname, 'rb') as file:
-    #         buf = file.read()
-    #         try:
-    #             buf = buf.decode('utf8') #byte to str
-    #         except:
-    #             buf = buf.decode('latin-1')
-    #         lines = re.split("\r*\n", buf)
-    #     for line in lines:
-    #         media = re.split('; ', line)
-    #         if media:
-    #             medias[media[0]] = media[1:]
+    def get_supports(self, fname):
+        """parse supports.publi and find correspondences"""
+        medias = {}
+        with open(fname, "rb") as file:
+            buf = file.read()
+            try:
+                buf = buf.decode("utf8")  # byte to str
+            except:
+                buf = buf.decode("latin-1")
+            lines = re.split("\r*\n", buf)
+        for line in lines:
+            media = re.split("; ", line)
+            if media:
+                medias[media[0]] = media[1:]
 
-    #     for key, article in self.articles.items():
-    #         if article['media'] in medias.keys():
-    #             self.articles[key]['support'] = medias[article['media']][0]
-    #             self.articles[key]['source_type'] = medias[article['media']][1]
-    #             self.articles[key]['root'] = medias[article['media']][2]
-    #         else:
-    #             if article['media'] not in self.unknowns:
-    #                 self.unknowns.append(article['media'])
-    #             self.articles[key]['support'] = article['media']
-    #             self.articles[key]['source_type'] = 'unknown source'
-    #             self.articles[key]['root'] = 'FACTIVA'
+        for key, article in self.articles.items():
+            if article["media"] in medias.keys():
+                self.articles[key]["support"] = medias[article["media"]][0]
+                self.articles[key]["source_type"] = medias[article["media"]][1]
+                self.articles[key]["root"] = medias[article["media"]][2]
+            else:
+                if article["media"] not in self.unknowns:
+                    self.unknowns.append(article["media"])
+                self.articles[key]["support"] = article["media"]
+                self.articles[key]["source_type"] = "unknown source"
+                self.articles[key]["root"] = "FACTIVA"
 
     def write_prospero_files(self, save_dir=".", cleaning=False):
         """for each article, write txt, csv and ctx in a given directory"""
 
         for _, row in self.content.iterrows():
-            filepath = file_name(str(row['PD']).replace('/', ''),
-                                 "FACTIVA",
-                                 save_dir)
+            filepath = file_name(str(row["PD"]).replace("/", ""), "FACTIVA", save_dir)
             path = os.path.join(save_dir, filepath + ".txt")
 
-            with open(path, 'wb') as file:
-                titulo = str(row['HD']) + "\r\n"
+            with open(path, "wb") as file:
+                titulo = str(row["HD"]) + "\r\n"
                 ponto = ".\r\n"
                 subtitulo = str(row["LP"]) + "\r\n"
                 texto = str(row["TD"])
-                file.write(titulo.encode('utf8'))
-                file.write(ponto.encode('utf8'))
-                file.write(subtitulo.encode('utf8'))
-                file.write(texto.encode('utf8'))
+                file.write(titulo.encode("utf8"))
+                file.write(ponto.encode("utf8"))
+                file.write(subtitulo.encode("utf8"))
+                file.write(texto.encode("utf8"))
 
             ed = f'\ ED: {row["ED"]}'
             pg_se = f'PG: {row["PG"]} / SE: {row["SE"]} '.replace("\\", " ")
             ctx = [
                 "fileCtx0005",  # 1
-                str(row['HD']).strip(),  # 2
+                str(row["HD"]).strip(),  # 2
                 f"{row['SN']}",  # 3
                 f"{row['BY']}",  # 4
                 "",  # 5
                 f"{row['PD']}",  # 6
                 f"{row['SN']}",  # 7
-                "", "",  # 8, #9
+                "",
+                "",  # 8, #9
                 pg_se,  # 10
                 "",  # 11,
                 # article['source_type'],
                 # "", "", "",
-                "Processed by Tiresias on %s" \
-                % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),  # 12
-                "", "n", "n",  # 13, #14, #15
+                "Processed by Tiresias on %s"
+                % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),  # 12
+                "",
+                "n",
+                "n",  # 13, #14, #15
             ]
             ctx = "\r\n".join(ctx)
-            ctx = ctx.encode('utf8', 'xmlcharrefreplace')  # to bytes
+            ctx = ctx.encode("utf8", "xmlcharrefreplace")  # to bytes
             path = os.path.join(save_dir, filepath + ".ctx")
-            with open(path, 'wb') as file:
+            with open(path, "wb") as file:
                 file.write(ctx)
 
 
